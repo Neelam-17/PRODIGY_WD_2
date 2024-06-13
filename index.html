@@ -4,22 +4,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stylish Stopwatch</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Stopwatch</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-    <div class="stopwatch-container">
-        <h1>Stylish Stopwatch</h1>
-        <div id="display" class="display">00:00:00.000</div>
+    <div class="container">
+        <h1>Stopwatch</h1>
+        <div class="stopwatch">
+            <span id="timer">00:00:00</span>
+        </div>
+        <div class="controls">
+            <button id="start-stop-btn">Start</button>
+            <button id="reset-btn" disabled>Reset</button>
+            <button id="lap-btn" disabled>Lap</button>
+        </div>
+        <div class="laps">
+            <ul id="laps-list"></ul>
+        </div>
     </div>
-    <div class="buttons">
-        <button id="startPauseBtn">Start</button>
-        <button id="resetBtn">Reset</button>
-        <button id="lapBtn">Lap</button>
-    </div>
-    <div id="laps" class="laps"></div>
     <script src="script.js"></script>
 </body>
-
 </html>

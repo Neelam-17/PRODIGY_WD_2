@@ -1,83 +1,67 @@
-// Variables to store time and state
-let startTime;
-let elapsedTime = 0;
-let timerInterval;
-let running = false;
+// script.js
+document.addEventListener('DOMContentLoaded', () => {
+    let startTime = 0;
+    let elapsedTime = 0;
+    let timerInterval;
+    let running = false;
+    const timerDisplay = document.getElementById('timer');
+    const startStopBtn = document.getElementById('start-stop-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const lapBtn = document.getElementById('lap-btn');
+    const lapsList = document.getElementById('laps-list');
 
-// Update the display with formatted time
-function timeToString(time) {
-    let diffInHrs = time / 3600000;
-    let hh = Math.floor(diffInHrs);
+    function formatTime(time) {
+        const hours = Math.floor(time / 3600000);
+        const minutes = Math.floor((time % 3600000) / 60000);
+        const seconds = Math.floor((time % 60000) / 1000);
+        const milliseconds = Math.floor((time % 1000) / 10);
 
-    let diffInMin = (diffInHrs - hh) * 60;
-    let mm = Math.floor(diffInMin);
+        return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}:${pad(milliseconds, 2)}`;
+    }
 
-    let diffInSec = (diffInMin - mm) * 60;
-    let ss = Math.floor(diffInSec);
+    function pad(number, length = 2) {
+        return number.toString().padStart(length, '0');
+    }
 
-    let formattedHH = hh.toString().padStart(2, "0");
-    let formattedMM = mm.toString().padStart(2, "0");
-    let formattedSS = ss.toString().padStart(2, "0");
-
-    return `${formattedHH}:${formattedMM}:${formattedSS}`;
-}
-
-// Update the HTML display
-function print(txt) {
-    document.getElementById("display").innerHTML = txt;
-}
-
-// Start the stopwatch
-function start() {
-    startTime = Date.now() - elapsedTime;
-    timerInterval = setInterval(function printTime() {
+    function updateTimer() {
         elapsedTime = Date.now() - startTime;
-        print(timeToString(elapsedTime));
-    }, 1000);
-    running = true;
-    document.getElementById("startStopBtn").innerText = "Pause";
-}
-
-// Stop the stopwatch
-function stop() {
-    clearInterval(timerInterval);
-    running = false;
-    document.getElementById("startStopBtn").innerText = "Start";
-}
-
-// Reset the stopwatch
-function reset() {
-    clearInterval(timerInterval);
-    print("00:00:00");
-    elapsedTime = 0;
-    running = false;
-    document.getElementById("startStopBtn").innerText = "Start";
-    document.getElementById("lapsList").innerHTML = "";
-}
-
-// Record a lap
-function lap() {
-    let lapsList = document.getElementById("lapsList");
-    let li = document.createElement("li");
-    li.innerText = timeToString(elapsedTime);
-    lapsList.appendChild(li);
-}
-
-// Add event listeners
-document.getElementById("startStopBtn").addEventListener("click", function() {
-    if (!running) {
-        start();
-    } else {
-        stop();
+        timerDisplay.textContent = formatTime(elapsedTime);
     }
-});
 
-document.getElementById("resetBtn").addEventListener("click", function() {
-    reset();
-});
-
-document.getElementById("lapBtn").addEventListener("click", function() {
-    if (running) {
-        lap();
+    function startStop() {
+        if (!running) {
+            startTime = Date.now() - elapsedTime;
+            timerInterval = setInterval(updateTimer, 10);
+            running = true;
+            startStopBtn.textContent = 'Stop';
+            resetBtn.disabled = false;
+            lapBtn.disabled = false;
+        } else {
+            clearInterval(timerInterval);
+            running = false;
+            startStopBtn.textContent = 'Start';
+        }
     }
+
+    function reset() {
+        clearInterval(timerInterval);
+        elapsedTime = 0;
+        timerDisplay.textContent = '00:00:00:00';
+        startStopBtn.textContent = 'Start';
+        resetBtn.disabled = true;
+        lapBtn.disabled = true;
+        running = false;
+        lapsList.innerHTML = '';
+    }
+
+    function recordLap() {
+        const lapTime = formatTime(elapsedTime);
+        const li = document.createElement('li');
+        li.textContent = lapTime;
+        lapsList.appendChild(li);
+    }
+
+    startStopBtn.addEventListener('click', startStop);
+    resetBtn.addEventListener('click', reset);
+    lapBtn.addEventListener('click', recordLap);
 });
